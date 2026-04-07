@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AcctMarket - Social Media Account Store"
+version = "1.0.0"
+id = "artifacts/acctmarket"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18286
+
+[services.development]
+run = "pnpm --filter @workspace/acctmarket run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/acctmarket", "run", "build" ]
+publicDir = "artifacts/acctmarket/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18286"
+BASE_PATH = "/"

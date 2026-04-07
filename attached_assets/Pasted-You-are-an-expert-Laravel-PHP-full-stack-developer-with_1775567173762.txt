@@ -1,0 +1,96 @@
+You are an expert Laravel/PHP full-stack developer with deep experience building ViserLab-style scripts (KeyLab, SocialMate, ViserPlace, etc.).
+Build a Minimum Viable Product (MVP) for a Social Media Account Selling Website that is an exact functional clone of the KeyLab Digital Account Selling Platform script on the frontend/user side + the full ViserLab Admin Panel on the backend.
+Core Concept
+
+A clean, modern marketplace where users buy social media account logs (Instagram, Facebook, Gmail, Twitter/X, TikTok, Snapchat, etc.) and other digital accounts using their account balance.
+Users can deposit money via Paystack (primary gateway) and spend the balance instantly.
+Everything must feel and function exactly like KeyLab + standard ViserLab admin panel.
+
+User-Facing Features (Frontend – KeyLab Style – MVP Scope)
+
+Authentication
+User registration / login (email + password)
+Social login (Google, Facebook – optional but preferred)
+Email verification + 2FA (Google Authenticator style)
+Forgot password / resend code
+
+User Dashboard & Profile
+Edit profile (avatar, username, bio, etc.)
+View balance & transaction history
+Deposit page (Paystack integration – one-click deposit)
+My Orders / Purchased Logs section (download/view delivered logs)
+
+Storefront / Shop
+Clean product grid with categories (Instagram Logs, Facebook Logs, Gmail PVA, etc.)
+Product detail page (description, price, stock status, preview info)
+Search + filters by platform, price, quality (fresh/aged)
+“Buy Now” button that deducts from user balance instantly
+Instant delivery of logs after successful purchase (text file or encrypted view)
+
+Balance System
+Users must have sufficient balance to buy
+Paystack deposit (Naira support, instant credit to balance)
+No withdrawal system in MVP
+
+General
+Responsive Bootstrap 5 + modern clean UI (exactly like KeyLab demo)
+SEO-friendly URLs
+Basic pages: About, FAQ, Terms, Contact
+
+
+Admin Dashboard (Exact ViserLab Admin Panel Style – MVP Scope)
+Replicate the powerful ViserLab admin panel exactly:
+Admin can:
+
+Manage Users (view, ban, edit balance manually)
+Manage Categories (add/edit/delete platforms)
+Manage Products / Logs (add new accounts/logs in bulk via CSV or single entry, set price, stock, description, status)
+Manage Orders / Purchases (view all sales, mark as delivered, download logs)
+Manage Deposits (Paystack logs + manual approve/credit)
+Manage Payments & Transactions
+Support Tickets (view + reply)
+Reports & Logs (sales report, user activity)
+General Settings:
+Site logo, favicon, name, currency (₦)
+Paystack API keys (public + secret)
+SEO settings
+Email & SMS templates
+Language settings (English default)
+Extensions / Maintenance mode
+
+
+Admin UI must include (ViserLab signature):
+
+Modern sidebar with menu search
+Dashboard widgets (total users, total sales, balance deposited, today’s revenue)
+Drag & drop image upload
+Form generator feel
+Clean, dark/light mode compatible, responsive
+
+Tech Stack (MVP)
+
+Laravel 11 + PHP 8.3
+MySQL
+Bootstrap 5 + jQuery (frontend)
+Livewire or plain Blade (keep it simple for MVP)
+Paystack PHP library for deposits
+Laravel Fortify or Breeze for auth + 2FA
+
+MVP Scope Rules (Strict)
+
+Focus ONLY on buying with balance + Paystack deposit.
+No seller dashboard, no auctions, no bidding (pure admin-managed store).
+No advanced analytics or referrals in MVP.
+Instant log delivery (admin uploads logs → user downloads after purchase).
+Keep it lightweight and fast to develop.
+
+Deliver the complete MVP as:
+
+Full database schema (migrations)
+Detailed folder structure
+Key routes & controllers list
+Step-by-step implementation plan
+Paystack integration code example
+Sample product data (Instagram logs, etc.)
+
+Make it production-ready, secure, and 100% styled like KeyLab + ViserLab admin. Start by giving me the full project overview and then the complete database migration files.
