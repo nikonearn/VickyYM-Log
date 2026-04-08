@@ -35,11 +35,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: settings } = useGetSettings();
 
   const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        setToken(null);
-      }
-    });
+    setToken(null);
+    logout.mutate(undefined);
   };
 
   const navItems = [

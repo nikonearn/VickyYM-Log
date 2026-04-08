@@ -144,13 +144,13 @@ export default function Profile() {
             <Form {...profileForm}>
               <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
                 <div className="space-y-2">
-                  <FormLabel>Username</FormLabel>
+                  <label className="text-sm font-medium">Username</label>
                   <Input value={user.username} disabled className="bg-muted" />
                   <p className="text-xs text-muted-foreground">Usernames cannot be changed.</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <FormLabel>Email</FormLabel>
+                  <label className="text-sm font-medium">Email</label>
                   <Input value={user.email} disabled className="bg-muted" />
                   <p className="text-xs text-muted-foreground">Contact support to change email.</p>
                 </div>
