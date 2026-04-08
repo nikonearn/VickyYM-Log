@@ -1,10 +1,9 @@
 import React from "react";
-import { App } from "../../App"; // just a placeholder since we export default from App
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/context/auth";
+import { AuthProvider, useAuth } from "@/context/auth";
 import NotFound from "@/pages/not-found";
 
 import Home from "@/pages/home";
@@ -40,6 +39,21 @@ import Contact from "@/pages/contact";
 
 const queryClient = new QueryClient();
 
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (!isAuthenticated) return <Redirect to="/login" />;
+  return <Component />;
+}
+
+function AdminRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAuthenticated, isAdmin, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (!isAuthenticated) return <Redirect to="/login" />;
+  if (!isAdmin) return <Redirect to="/dashboard" />;
+  return <Component />;
+}
+
 function Router() {
   return (
     <Switch>
@@ -53,28 +67,26 @@ function Router() {
       <Route path="/terms" component={Terms} />
       <Route path="/contact" component={Contact} />
 
-      {/* Dashboard Routes */}
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/dashboard/orders" component={Orders} />
-      <Route path="/dashboard/wallet" component={Wallet} />
-      <Route path="/dashboard/deposit" component={Deposit} />
-      <Route path="/dashboard/profile" component={Profile} />
-      <Route path="/dashboard/support" component={Support} />
-      <Route path="/dashboard/support/:id" component={SupportDetail} />
+      <Route path="/dashboard">{() => <ProtectedRoute component={Dashboard} />}</Route>
+      <Route path="/dashboard/orders">{() => <ProtectedRoute component={Orders} />}</Route>
+      <Route path="/dashboard/wallet">{() => <ProtectedRoute component={Wallet} />}</Route>
+      <Route path="/dashboard/deposit">{() => <ProtectedRoute component={Deposit} />}</Route>
+      <Route path="/dashboard/profile">{() => <ProtectedRoute component={Profile} />}</Route>
+      <Route path="/dashboard/support">{() => <ProtectedRoute component={Support} />}</Route>
+      <Route path="/dashboard/support/:id">{() => <ProtectedRoute component={SupportDetail} />}</Route>
 
-      {/* Admin Routes */}
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/users" component={AdminUsers} />
-      <Route path="/admin/users/:id" component={AdminUserDetail} />
-      <Route path="/admin/products" component={AdminProducts} />
-      <Route path="/admin/products/new" component={AdminProductNew} />
-      <Route path="/admin/products/:id/edit" component={AdminProductEdit} />
-      <Route path="/admin/categories" component={AdminCategories} />
-      <Route path="/admin/orders" component={AdminOrders} />
-      <Route path="/admin/deposits" component={AdminDeposits} />
-      <Route path="/admin/support" component={AdminSupport} />
-      <Route path="/admin/settings" component={AdminSettings} />
-      <Route path="/admin/reports" component={AdminReports} />
+      <Route path="/admin">{() => <AdminRoute component={AdminDashboard} />}</Route>
+      <Route path="/admin/users">{() => <AdminRoute component={AdminUsers} />}</Route>
+      <Route path="/admin/users/:id">{() => <AdminRoute component={AdminUserDetail} />}</Route>
+      <Route path="/admin/products">{() => <AdminRoute component={AdminProducts} />}</Route>
+      <Route path="/admin/products/new">{() => <AdminRoute component={AdminProductNew} />}</Route>
+      <Route path="/admin/products/:id/edit">{() => <AdminRoute component={AdminProductEdit} />}</Route>
+      <Route path="/admin/categories">{() => <AdminRoute component={AdminCategories} />}</Route>
+      <Route path="/admin/orders">{() => <AdminRoute component={AdminOrders} />}</Route>
+      <Route path="/admin/deposits">{() => <AdminRoute component={AdminDeposits} />}</Route>
+      <Route path="/admin/support">{() => <AdminRoute component={AdminSupport} />}</Route>
+      <Route path="/admin/settings">{() => <AdminRoute component={AdminSettings} />}</Route>
+      <Route path="/admin/reports">{() => <AdminRoute component={AdminReports} />}</Route>
 
       <Route component={NotFound} />
     </Switch>

@@ -5,7 +5,7 @@ import { useListOrders, useGetSettings, useGetOrder } from "@workspace/api-clien
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Download, Search, Clock, Copy, CheckCircle } from "lucide-react";
+import { Eye, Download, Search, Clock, Copy, CheckCircle, ShieldCheck } from "lucide-react";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import {

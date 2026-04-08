@@ -31,11 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       localStorage.removeItem("token");
     }
-    // Invalidate user query
     queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
   };
 
-  const { data: user, isLoading: isUserLoading } = useGetMe({
+  const { data: user, isLoading: isUserLoading, error } = useGetMe({
     query: {
       enabled: !!token,
       retry: false,
@@ -43,13 +42,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    // If request failed and we have a token, it might be expired
-    if (!isUserLoading && token && !user) {
-      // We don't automatically logout here as the query might just be failing due to network
-      // The generated hook doesn't give us the error easily unless we destructure it
-      // But if user is undefined and not loading, we're essentially unauthenticated
+    if (!isUserLoading && token && !user && error) {
+      setTokenState(null);
+      localStorage.removeItem("token");
+      queryClient.clear();
     }
-  }, [user, token, isUserLoading]);
+  }, [user, token, isUserLoading, error]);
 
   const value = {
     user: user || null,

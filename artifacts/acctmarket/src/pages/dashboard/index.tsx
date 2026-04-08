@@ -6,7 +6,7 @@ import { useGetWalletBalance, useListOrders, useListTransactions, useGetSettings
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Wallet, ShoppingCart, ArrowUpRight, ArrowDownRight, CreditCard, Clock } from "lucide-react";
+import { Wallet, ShoppingCart, ArrowUpRight, ArrowDownRight, CreditCard, Clock, Store } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 
@@ -26,9 +26,17 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <p className="text-muted-foreground">Welcome to your dashboard, {user.fullName || user.username}.</p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
+          <p className="text-muted-foreground">Welcome back, {user.fullName || user.username}.</p>
+        </div>
+        <Button asChild size="lg" className="gap-2 shrink-0">
+          <Link href="/shop">
+            <Store className="h-5 w-5" />
+            Buy Accounts
+          </Link>
+        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3 mb-8">

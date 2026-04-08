@@ -11,7 +11,8 @@ import {
   LifeBuoy, 
   LogOut,
   Shield,
-  Menu
+  Menu,
+  Store
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,6 +44,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+    { href: "/shop", label: "Products", icon: Store },
     { href: "/dashboard/orders", label: "My Orders", icon: ShoppingCart },
     { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
     { href: "/dashboard/deposit", label: "Deposit", icon: CreditCard },

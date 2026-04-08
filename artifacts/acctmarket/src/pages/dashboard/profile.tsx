@@ -10,8 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { User, Lock, Save } from "lucide-react";
+import { User, Lock, Save, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
@@ -108,7 +109,20 @@ export default function Profile() {
     );
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <DashboardLayout>
+        <div className="mb-8">
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-80" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
+          <Skeleton className="h-80 rounded-xl" />
+          <Skeleton className="h-80 rounded-xl" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
