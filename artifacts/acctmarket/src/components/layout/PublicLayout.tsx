@@ -12,11 +12,8 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
   const logout = useLogout();
 
   const handleLogout = () => {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        setToken(null);
-      }
-    });
+    setToken(null);
+    logout.mutate(undefined);
   };
 
   return (
@@ -24,8 +21,14 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <header className="border-b bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
-            <Shield className="h-6 w-6" />
-            <span>{settings?.siteName || "AcctMarket"}</span>
+            {settings?.logoUrl ? (
+              <img src={settings.logoUrl} alt={settings.siteName} className="h-8 object-contain" />
+            ) : (
+              <>
+                <Shield className="h-6 w-6" />
+                <span>{settings?.siteName || "AcctMarket"}</span>
+              </>
+            )}
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">

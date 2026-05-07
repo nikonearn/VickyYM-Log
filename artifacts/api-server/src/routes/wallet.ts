@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, transactionsTable, usersTable, depositsTable } from "@workspace/db";
-import { eq, desc, count, sum } from "drizzle-orm";
+import { eq, desc, count, sum, and } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 import { ListTransactionsQueryParams } from "@workspace/api-zod";
 
@@ -21,7 +21,7 @@ router.get("/wallet/balance", requireAuth, async (req, res): Promise<void> => {
   const [spent] = await db
     .select({ total: sum(transactionsTable.amount) })
     .from(transactionsTable)
-    .where(eq(transactionsTable.userId, req.userId!));
+    .where(and(eq(transactionsTable.userId, req.userId!), eq(transactionsTable.type, "purchase")));
 
   const recentTxs = await db
     .select()

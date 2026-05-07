@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, productsTable, categoriesTable } from "@workspace/db";
-import { eq, ilike, and, gte, lte, desc, count, inArray } from "drizzle-orm";
+import { eq, ilike, and, gte, lte, desc, count, inArray, SQL } from "drizzle-orm";
 import { requireAdmin } from "../middlewares/auth";
 import {
   ListProductsQueryParams,
@@ -59,7 +59,7 @@ router.get("/products", async (req, res): Promise<void> => {
   }
   const { categoryId, search, minPrice, maxPrice, quality, page = 1, limit = 12 } = params.data;
 
-  const conditions = [eq(productsTable.isAvailable, true)];
+  const conditions: SQL[] = [];
   if (categoryId) conditions.push(eq(productsTable.categoryId, categoryId));
   if (search) conditions.push(ilike(productsTable.name, `%${search}%`));
   if (minPrice != null) conditions.push(gte(productsTable.price, String(minPrice)));
@@ -67,15 +67,17 @@ router.get("/products", async (req, res): Promise<void> => {
   if (quality) conditions.push(eq(productsTable.quality, quality));
 
   const offset = (page - 1) * limit;
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
   const [{ total }] = await db
     .select({ total: count() })
     .from(productsTable)
-    .where(and(...conditions));
+    .where(whereClause);
 
   const products = await db
     .select()
     .from(productsTable)
-    .where(and(...conditions))
+    .where(whereClause)
     .orderBy(desc(productsTable.createdAt))
     .limit(limit)
     .offset(offset);

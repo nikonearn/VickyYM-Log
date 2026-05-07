@@ -12,6 +12,7 @@ export interface UpdateSettingsBody {
   currency?: string;
   currencySymbol?: string;
   logoUrl?: string;
+  faviconUrl?: string;
   paystackPublicKey?: string;
   paystackSecretKey?: string;
   aboutText?: string;

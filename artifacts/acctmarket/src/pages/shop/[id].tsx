@@ -4,7 +4,7 @@ import { PublicLayout } from "@/components/layout/PublicLayout";
 import { useGetProduct, useGetSettings, useCreateOrder, useGetMe } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, Info, CheckCircle, AlertTriangle, ArrowLeft } from "lucide-react";
+import { ShieldCheck, Info, CheckCircle, AlertTriangle, ArrowLeft, Minus, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth";
@@ -34,6 +34,7 @@ export default function ProductDetail() {
   
   const createOrder = useCreateOrder();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const getQualityColor = (quality: string) => {
     switch (quality.toLowerCase()) {
@@ -59,28 +60,36 @@ export default function ProductDetail() {
     setIsConfirmOpen(true);
   };
 
-  const confirmPurchase = () => {
-    createOrder.mutate(
-      { data: { productId } },
-      {
-        onSuccess: (order) => {
-          setIsConfirmOpen(false);
-          toast({
-            title: "Purchase Successful!",
-            description: "Your account logs are ready in your dashboard.",
-          });
-          setLocation(`/dashboard/orders`);
-        },
-        onError: (error: any) => {
-          setIsConfirmOpen(false);
-          toast({
-            title: "Purchase Failed",
-            description: error?.data?.error || "Could not complete purchase. Check your balance.",
-            variant: "destructive"
-          });
-        }
+  const confirmPurchase = async () => {
+    let completed = 0;
+    for (let i = 0; i < quantity; i++) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          createOrder.mutate(
+            { data: { productId } },
+            { onSuccess: () => resolve(), onError: (e) => reject(e) }
+          );
+        });
+        completed++;
+      } catch (error: any) {
+        setIsConfirmOpen(false);
+        toast({
+          title: completed > 0 ? `Partial Purchase (${completed}/${quantity})` : "Purchase Failed",
+          description: completed > 0
+            ? `${completed} account(s) delivered. Stopped: ${error?.data?.error || "Insufficient balance."}`
+            : error?.data?.error || "Could not complete purchase. Check your balance.",
+          variant: completed > 0 ? "default" : "destructive",
+        });
+        setLocation("/dashboard/orders");
+        return;
       }
-    );
+    }
+    setIsConfirmOpen(false);
+    toast({
+      title: "Purchase Successful!",
+      description: `${quantity} account${quantity > 1 ? "s" : ""} delivered to your dashboard.`,
+    });
+    setLocation("/dashboard/orders");
   };
 
   if (isLoading) {
@@ -192,6 +201,34 @@ export default function ProductDetail() {
                 <CheckCircle className="h-4 w-4 text-primary" />
                 <span>Instant automated delivery via dashboard.</span>
               </div>
+
+              {product.isAvailable && (
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Quantity</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      className="h-10 w-10 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="text-xl font-bold w-8 text-center">{quantity}</span>
+                    <button
+                      type="button"
+                      className="h-10 w-10 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors disabled:opacity-40"
+                      onClick={() => setQuantity((q) => Math.min(product.stockCount, q + 1))}
+                      disabled={quantity >= product.stockCount}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                    <span className="text-sm text-muted-foreground ml-2">
+                      Total: <span className="font-bold text-foreground">{settings?.currencySymbol || "₦"}{(product.price * quantity).toLocaleString()}</span>
+                    </span>
+                  </div>
+                </div>
+              )}
               
               <Button 
                 size="lg" 
@@ -211,22 +248,34 @@ export default function ProductDetail() {
           <DialogHeader>
             <DialogTitle>Confirm Purchase</DialogTitle>
             <DialogDescription>
-              You are about to purchase <strong>{product.name}</strong> for {settings?.currencySymbol || "₦"}{product.price.toLocaleString()}.
+              You are about to purchase <strong>{quantity}x {product.name}</strong>.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="py-4">
-            <div className="flex justify-between p-3 bg-muted rounded-lg mb-4">
+          <div className="py-4 space-y-3">
+            <div className="flex justify-between p-3 bg-muted rounded-lg">
+              <span className="text-muted-foreground">Unit Price:</span>
+              <span className="font-semibold">{settings?.currencySymbol || "₦"}{product.price.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between p-3 bg-muted rounded-lg">
+              <span className="text-muted-foreground">Quantity:</span>
+              <span className="font-semibold">{quantity}</span>
+            </div>
+            <div className="flex justify-between p-3 bg-primary/10 rounded-lg border border-primary/20">
+              <span className="font-bold">Total:</span>
+              <span className="font-bold text-primary">{settings?.currencySymbol || "₦"}{(product.price * quantity).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between p-3 bg-muted rounded-lg">
               <span className="text-muted-foreground">Your Balance:</span>
-              <span className={`font-semibold ${user && user.balance < product.price ? "text-destructive" : ""}`}>
+              <span className={`font-semibold ${user && user.balance < product.price * quantity ? "text-destructive" : "text-green-500"}`}>
                 {settings?.currencySymbol || "₦"}{(user?.balance || 0).toLocaleString()}
               </span>
             </div>
             
-            {user && user.balance < product.price && (
+            {user && user.balance < product.price * quantity && (
               <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
-                <p>You don't have enough balance. Please <Link href="/dashboard/deposit" className="underline font-bold">deposit funds</Link> first.</p>
+                <p>Insufficient balance for {quantity} units. Please <Link href="/dashboard/deposit" className="underline font-bold">deposit funds</Link> or reduce quantity.</p>
               </div>
             )}
           </div>
@@ -235,9 +284,9 @@ export default function ProductDetail() {
             <Button variant="outline" onClick={() => setIsConfirmOpen(false)}>Cancel</Button>
             <Button 
               onClick={confirmPurchase} 
-              disabled={createOrder.isPending || (user ? user.balance < product.price : true)}
+              disabled={createOrder.isPending || (user ? user.balance < product.price * quantity : true)}
             >
-              Confirm Purchase
+              {createOrder.isPending ? "Processing..." : `Buy ${quantity} Account${quantity > 1 ? "s" : ""}`}
             </Button>
           </DialogFooter>
         </DialogContent>

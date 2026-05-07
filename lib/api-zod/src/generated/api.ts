@@ -777,6 +777,7 @@ export const UpdateSettingsBody = zod.object({
   currency: zod.string().optional(),
   currencySymbol: zod.string().optional(),
   logoUrl: zod.string().optional(),
+  faviconUrl: zod.string().optional(),
   paystackPublicKey: zod.string().optional(),
   paystackSecretKey: zod.string().optional(),
   aboutText: zod.string().optional(),

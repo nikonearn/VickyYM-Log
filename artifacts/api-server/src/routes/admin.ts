@@ -328,6 +328,35 @@ router.get("/admin/support/tickets", requireAdmin, async (req, res): Promise<voi
   })));
 });
 
+router.get("/admin/support/tickets/:id", requireAdmin, async (req, res): Promise<void> => {
+  const id = parseInt(req.params.id ?? "0");
+  if (!id) { res.status(400).json({ error: "Invalid id" }); return; }
+  const [ticket] = await db.select().from(ticketsTable).where(eq(ticketsTable.id, id));
+  if (!ticket) { res.status(404).json({ error: "Ticket not found" }); return; }
+  const messages = await db
+    .select()
+    .from(ticketMessagesTable)
+    .where(eq(ticketMessagesTable.ticketId, ticket.id))
+    .orderBy(ticketMessagesTable.createdAt);
+  res.json({
+    id: ticket.id,
+    userId: ticket.userId,
+    subject: ticket.subject,
+    status: ticket.status,
+    priority: ticket.priority,
+    createdAt: ticket.createdAt.toISOString(),
+    updatedAt: ticket.updatedAt.toISOString(),
+    messages: messages.map((m) => ({
+      id: m.id,
+      ticketId: m.ticketId,
+      userId: m.userId,
+      message: m.message,
+      isAdmin: m.isAdmin === "true",
+      createdAt: m.createdAt.toISOString(),
+    })),
+  });
+});
+
 router.post("/admin/support/tickets/:id/reply", requireAdmin, async (req, res): Promise<void> => {
   const params = AdminReplyTicketParams.safeParse(req.params);
   if (!params.success) {

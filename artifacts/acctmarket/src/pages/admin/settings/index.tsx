@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save } from "lucide-react";
+import { Save, Image } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -25,10 +25,12 @@ import {
 const settingsSchema = z.object({
   siteName: z.string().min(1, "Site name is required"),
   siteTagline: z.string().optional(),
+  logoUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  faviconUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   currency: z.string().min(1, "Currency code is required"),
   currencySymbol: z.string().min(1, "Currency symbol is required"),
   paystackPublicKey: z.string().min(1, "Paystack public key is required"),
-  paystackSecretKey: z.string().optional(), // Kept optional on frontend in case they don't want to change it
+  paystackSecretKey: z.string().optional(),
   contactEmail: z.string().email().optional().or(z.literal("")),
   aboutText: z.string().optional(),
   faqText: z.string().optional(),
@@ -47,6 +49,8 @@ export default function AdminSettings() {
     defaultValues: {
       siteName: "",
       siteTagline: "",
+      logoUrl: "",
+      faviconUrl: "",
       currency: "NGN",
       currencySymbol: "₦",
       paystackPublicKey: "",
@@ -64,6 +68,8 @@ export default function AdminSettings() {
       form.reset({
         siteName: settings.siteName,
         siteTagline: settings.siteTagline || "",
+        logoUrl: settings.logoUrl || "",
+        faviconUrl: settings.faviconUrl || "",
         currency: settings.currency,
         currencySymbol: settings.currencySymbol,
         paystackPublicKey: settings.paystackPublicKey,
@@ -106,6 +112,53 @@ export default function AdminSettings() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Branding</CardTitle>
+                  <CardDescription>Logo and favicon shown site-wide. Paste a direct image URL (e.g. https://...).</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="logoUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Logo URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://example.com/logo.png" {...field} />
+                        </FormControl>
+                        <FormDescription>Leave blank to use default text logo.</FormDescription>
+                        {field.value && (
+                          <div className="mt-2 p-3 bg-muted rounded-lg border inline-block">
+                            <img src={field.value} alt="Logo preview" className="h-10 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          </div>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="faviconUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Favicon URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://example.com/favicon.ico" {...field} />
+                        </FormControl>
+                        <FormDescription>Browser tab icon. Leave blank for default.</FormDescription>
+                        {field.value && (
+                          <div className="mt-2 p-3 bg-muted rounded-lg border inline-block">
+                            <img src={field.value} alt="Favicon preview" className="h-8 w-8 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          </div>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
               <Card>
                 <CardHeader>
                   <CardTitle>General Config</CardTitle>

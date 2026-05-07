@@ -106,7 +106,7 @@ export default function AdminSupport() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Button asChild size="sm" variant="secondary">
-                        <Link href={`/dashboard/support/${ticket.id}`}>
+                        <Link href={`/admin/support/${ticket.id}`}>
                           <MessageSquare className="mr-2 h-4 w-4" /> Reply
                         </Link>
                       </Button>

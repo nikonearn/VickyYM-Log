@@ -28,10 +28,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokenState(newToken);
     if (newToken) {
       localStorage.setItem("token", newToken);
+      queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
     } else {
       localStorage.removeItem("token");
+      queryClient.removeQueries({ queryKey: getGetMeQueryKey() });
+      queryClient.clear();
     }
-    queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
   };
 
   const { data: user, isLoading: isUserLoading, error } = useGetMe({

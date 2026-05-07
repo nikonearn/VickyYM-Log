@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/auth";
+import { useGetSettings } from "@workspace/api-client-react";
 import NotFound from "@/pages/not-found";
 
 import Home from "@/pages/home";
@@ -29,6 +30,7 @@ import AdminCategories from "@/pages/admin/categories/index";
 import AdminOrders from "@/pages/admin/orders/index";
 import AdminDeposits from "@/pages/admin/deposits/index";
 import AdminSupport from "@/pages/admin/support/index";
+import AdminSupportDetail from "@/pages/admin/support/[id]";
 import AdminSettings from "@/pages/admin/settings/index";
 import AdminReports from "@/pages/admin/reports/index";
 
@@ -85,6 +87,7 @@ function Router() {
       <Route path="/admin/orders">{() => <AdminRoute component={AdminOrders} />}</Route>
       <Route path="/admin/deposits">{() => <AdminRoute component={AdminDeposits} />}</Route>
       <Route path="/admin/support">{() => <AdminRoute component={AdminSupport} />}</Route>
+      <Route path="/admin/support/:id">{() => <AdminRoute component={AdminSupportDetail} />}</Route>
       <Route path="/admin/settings">{() => <AdminRoute component={AdminSettings} />}</Route>
       <Route path="/admin/reports">{() => <AdminRoute component={AdminReports} />}</Route>
 
@@ -93,12 +96,32 @@ function Router() {
   );
 }
 
+function SiteHead() {
+  const { data: settings } = useGetSettings();
+  React.useEffect(() => {
+    if (settings?.faviconUrl) {
+      let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+      link.href = settings.faviconUrl;
+    }
+    if (settings?.siteName) {
+      document.title = settings.siteName;
+    }
+  }, [settings?.faviconUrl, settings?.siteName]);
+  return null;
+}
+
 function MainApp() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <SiteHead />
             <Router />
           </WouterRouter>
           <Toaster />
