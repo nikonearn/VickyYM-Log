@@ -56,15 +56,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <SidebarHeader className="h-16 flex items-center px-4 border-b">
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary w-full overflow-hidden">
               {settings?.logoUrl ? (
-                <img src={settings.logoUrl} alt={settings.siteName || "AcctMarket"} className="h-7 object-contain group-data-[collapsible=icon]:hidden" />
+                <img src={settings.logoUrl} alt={settings.siteName || "AcctMarket"} className="h-7 object-contain shrink-0" />
               ) : (
-                <>
-                  <Shield className="h-6 w-6 shrink-0" />
-                  <span className="truncate group-data-[collapsible=icon]:hidden">
-                    {settings?.siteName || "AcctMarket"}
-                  </span>
-                </>
+                <Shield className="h-6 w-6 shrink-0" />
               )}
+              <span className="truncate group-data-[collapsible=icon]:hidden">
+                {settings?.siteName || "AcctMarket"}
+              </span>
             </Link>
           </SidebarHeader>
           <SidebarContent>

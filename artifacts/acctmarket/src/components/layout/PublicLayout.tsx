@@ -24,11 +24,9 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             {settings?.logoUrl ? (
               <img src={settings.logoUrl} alt={settings.siteName} className="h-8 object-contain" />
             ) : (
-              <>
-                <Shield className="h-6 w-6" />
-                <span>{settings?.siteName || "AcctMarket"}</span>
-              </>
+              <Shield className="h-6 w-6" />
             )}
+            <span>{settings?.siteName || "AcctMarket"}</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
