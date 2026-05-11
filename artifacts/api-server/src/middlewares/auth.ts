@@ -19,7 +19,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     return;
   }
   const token = header.slice(7);
-  const userId = validateToken(token);
+  const userId = await validateToken(token);
   if (!userId) {
     res.status(401).json({ error: "Invalid or expired token" });
     return;
@@ -48,7 +48,7 @@ export async function optionalAuth(req: Request, _res: Response, next: NextFunct
   const header = req.headers.authorization;
   if (header?.startsWith("Bearer ")) {
     const token = header.slice(7);
-    const userId = validateToken(token);
+    const userId = await validateToken(token);
     if (userId) {
       req.userId = userId;
       const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));

@@ -38,7 +38,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
     isBanned: false,
   }).returning();
 
-  const token = createToken(user.id);
+  const token = await createToken(user.id);
 
   res.status(201).json({
     user: {
@@ -79,7 +79,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     return;
   }
 
-  const token = createToken(user.id);
+  const token = await createToken(user.id);
 
   res.json({
     user: {
@@ -101,7 +101,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 router.post("/auth/logout", requireAuth, async (req, res): Promise<void> => {
   const header = req.headers.authorization;
   if (header?.startsWith("Bearer ")) {
-    deleteToken(header.slice(7));
+    await deleteToken(header.slice(7));
   }
   res.json({ message: "Logged out successfully" });
 });
