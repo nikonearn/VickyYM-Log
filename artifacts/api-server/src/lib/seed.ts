@@ -25,8 +25,8 @@ export async function seedIfEmpty(): Promise<void> {
   const [{ settingsTotal }] = await db.select({ settingsTotal: count() }).from(settingsTable);
   if (Number(settingsTotal) === 0) {
     await db.insert(settingsTable).values({
-      siteName: "AcctMarket",
-      siteTagline: "Premium Social Media Accounts",
+      siteName: "VickyYM Log Store",
+      siteTagline: "Social Media Account Store",
       currency: "NGN",
       currencySymbol: "₦",
       paystackPublicKey: "",

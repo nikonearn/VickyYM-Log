@@ -109,9 +109,11 @@ function SiteHead() {
       link.href = settings.faviconUrl;
     }
     if (settings?.siteName) {
-      document.title = settings.siteName;
+      document.title = settings.siteTagline
+        ? `${settings.siteName} - ${settings.siteTagline}`
+        : settings.siteName;
     }
-  }, [settings?.faviconUrl, settings?.siteName]);
+  }, [settings?.faviconUrl, settings?.siteName, settings?.siteTagline]);
   return null;
 }
 

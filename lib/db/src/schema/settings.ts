@@ -4,8 +4,8 @@ import { z } from "zod/v4";
 
 export const settingsTable = pgTable("settings", {
   id: serial("id").primaryKey(),
-  siteName: text("site_name").notNull().default("AcctMarket"),
-  siteTagline: text("site_tagline").notNull().default("Premium Social Media Accounts"),
+  siteName: text("site_name").notNull().default("VickyYM Log Store"),
+  siteTagline: text("site_tagline").notNull().default("Social Media Account Store"),
   currency: text("currency").notNull().default("NGN"),
   currencySymbol: text("currency_symbol").notNull().default("₦"),
   logoUrl: text("logo_url"),
