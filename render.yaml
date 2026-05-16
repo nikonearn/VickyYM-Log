@@ -2,7 +2,7 @@ services:
   - type: web
     name: acctmarket
     runtime: node
-    buildCommand: pnpm install --frozen-lockfile && pnpm -w run build:prod
+    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm -w run build:prod
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     envVars:
       - key: NODE_ENV
