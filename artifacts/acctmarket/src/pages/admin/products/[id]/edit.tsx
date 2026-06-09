@@ -82,7 +82,7 @@ export default function AdminProductEdit() {
         originalPrice: product.originalPrice ? Number(product.originalPrice) : "",
         quality: product.quality,
         imageUrl: product.imageUrl || "",
-        stockLogs: "",
+        stockLogs: product.stockLogs || "",
         previewInfo: product.previewInfo || "",
         isAvailable: product.isAvailable,
         isFeatured: product.isFeatured,
@@ -182,7 +182,7 @@ export default function AdminProductEdit() {
               <Card>
                 <CardHeader>
                   <CardTitle>Inventory ({product.stockCount} in stock)</CardTitle>
-                  <CardDescription>Leave blank to keep existing stock. Paste one account per line to ADD more.</CardDescription>
+                  <CardDescription>Edit the full list of credentials. Each line is one account. Saving replaces all existing stock.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -190,7 +190,7 @@ export default function AdminProductEdit() {
                     name="stockLogs"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Add Stock Logs</FormLabel>
+                        <FormLabel>Stock Logs (Credentials)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder={"user1:pass1\nuser2:pass2"}
