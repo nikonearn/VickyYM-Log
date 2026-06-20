@@ -1,0 +1,23 @@
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://outdoor-r00v.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////
+{"level":30,"time":1781983295746,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":3,"method":"GET","url":"/"},"res":{"statusCode":200},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1781983296059,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":4,"method":"GET","url":"/assets/index-vBRbYgOM.css"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1781983296425,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":5,"method":"GET","url":"/assets/index-Duv_XddD.js"},"res":{"statusCode":200},"responseTime":4,"msg":"request completed"}
+(node:70) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"level":30,"time":1781983299754,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":6,"method":"GET","url":"/api/site-settings"},"res":{"statusCode":200},"responseTime":793,"msg":"request completed"}
+{"level":30,"time":1781983309945,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":7,"method":"GET","url":"/"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1781983310536,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":8,"method":"GET","url":"/apply"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1781983311135,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":9,"method":"GET","url":"/admin/login"},"res":{"statusCode":200},"responseTime":2,"msg":"request completed"}
+{"level":30,"time":1781983313708,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":10,"method":"GET","url":"/assets/index-vBRbYgOM.css"},"res":{"statusCode":304},"responseTime":1,"msg":"request completed"}
+{"level":30,"time":1781983313710,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":11,"method":"GET","url":"/assets/index-Duv_XddD.js"},"res":{"statusCode":304},"responseTime":0,"msg":"request completed"}
+{"level":30,"time":1781983327893,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":12,"method":"POST","url":"/api/admin/login"},"res":{"statusCode":401},"responseTime":56,"msg":"request completed"}
+{"level":30,"time":1781983333783,"pid":70,"hostname":"srv-d8rb5bb7uimc73evgnkg-hibernate-6d4977949d-zkx97","req":{"id":13,"method":"GET","url":"/api/site-settings"},"res":{"statusCode":304},"responseTime":4,"msg":"request completed"}
