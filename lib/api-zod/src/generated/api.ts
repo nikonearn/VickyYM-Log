@@ -325,6 +325,38 @@ export const DeleteProductParams = zod.object({
 });
 
 /**
+ * @summary Get product details including stock credentials (admin)
+ */
+export const GetAdminProductParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetAdminProductResponse = zod
+  .object({
+    id: zod.number(),
+    categoryId: zod.number(),
+    categoryName: zod.string(),
+    name: zod.string(),
+    slug: zod.string(),
+    description: zod.string().nullish(),
+    price: zod.number(),
+    originalPrice: zod.number().nullish(),
+    quality: zod.string(),
+    stockCount: zod.number(),
+    isAvailable: zod.boolean(),
+    isFeatured: zod.boolean(),
+    previewInfo: zod.string().nullish(),
+    imageUrl: zod.string().nullish(),
+    totalSold: zod.number(),
+    createdAt: zod.string(),
+  })
+  .and(
+    zod.object({
+      stockLogs: zod.string().nullable(),
+    }),
+  );
+
+/**
  * @summary List user orders
  */
 export const ListOrdersQueryParams = zod.object({

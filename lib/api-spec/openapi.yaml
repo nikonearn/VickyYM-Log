@@ -373,6 +373,31 @@ paths:
         "204":
           description: Product deleted
 
+  /admin/products/{id}:
+    get:
+      operationId: getAdminProduct
+      tags: [admin]
+      summary: Get product details including stock credentials (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product details including credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminProduct"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   # ORDERS
   /orders:
     get:
@@ -1086,6 +1111,16 @@ components:
         - isFeatured
         - totalSold
         - createdAt
+
+    AdminProduct:
+      allOf:
+        - $ref: "#/components/schemas/Product"
+        - type: object
+          properties:
+            stockLogs:
+              type: ["string", "null"]
+          required:
+            - stockLogs
 
     ProductListResponse:
       type: object

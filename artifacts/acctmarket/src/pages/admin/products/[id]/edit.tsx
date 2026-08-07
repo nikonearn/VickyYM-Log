@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useRoute } from "wouter";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { useGetProduct, useUpdateProduct, useListCategories, getListProductsQueryKey, getGetProductQueryKey } from "@workspace/api-client-react";
+import { useGetAdminProduct, useUpdateProduct, useListCategories, getListProductsQueryKey, getGetAdminProductQueryKey } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -49,11 +49,12 @@ export default function AdminProductEdit() {
   const queryClient = useQueryClient();
   const { data: categories } = useListCategories();
 
-  const { data: product, isLoading } = useGetProduct(productId, {
-    query: { enabled: !!productId }
+  const { data: product, isLoading } = useGetAdminProduct(productId, {
+    query: { enabled: !!productId, queryKey: getGetAdminProductQueryKey(productId) }
   });
 
   const updateProduct = useUpdateProduct();
+  const [stockLogEntries, setStockLogEntries] = useState<string[]>([]);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -74,6 +75,8 @@ export default function AdminProductEdit() {
 
   useEffect(() => {
     if (product) {
+      const entries = (product.stockLogs || "").split("\n").filter((line) => line.trim().length > 0);
+      setStockLogEntries(entries);
       form.reset({
         name: product.name,
         categoryId: product.categoryId,
@@ -82,19 +85,26 @@ export default function AdminProductEdit() {
         originalPrice: product.originalPrice ? Number(product.originalPrice) : "",
         quality: product.quality,
         imageUrl: product.imageUrl || "",
-        stockLogs: product.stockLogs || "",
+        stockLogs: entries.join("\n"),
         previewInfo: product.previewInfo || "",
         isAvailable: product.isAvailable,
         isFeatured: product.isFeatured,
       });
     }
-  }, [product]);
+  }, [product, form]);
+
+  const updateStockLogEntries = (entries: string[]) => {
+    setStockLogEntries(entries);
+    form.setValue("stockLogs", entries.join("\n"), { shouldDirty: true, shouldValidate: true });
+  };
 
   const onSubmit = (values: ProductFormValues) => {
     const payload = {
       ...values,
       originalPrice: values.originalPrice === "" ? undefined : Number(values.originalPrice),
-      stockLogs: values.stockLogs === "" ? undefined : values.stockLogs,
+      // Always send this field, including an empty string, so removing the
+      // final saved credential also clears inventory on the server.
+      stockLogs: values.stockLogs ?? "",
     };
 
     updateProduct.mutate(
@@ -102,7 +112,7 @@ export default function AdminProductEdit() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetProductQueryKey(productId) });
+          queryClient.invalidateQueries({ queryKey: getGetAdminProductQueryKey(productId) });
           toast({ title: "Product updated", description: "Changes have been saved." });
           setLocation("/admin/products");
         },
@@ -181,8 +191,8 @@ export default function AdminProductEdit() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Inventory ({product.stockCount} in stock)</CardTitle>
-                  <CardDescription>Edit the full list of credentials. Each line is one account. Saving replaces all existing stock.</CardDescription>
+                  <CardTitle>Inventory ({stockLogEntries.length} in stock)</CardTitle>
+                  <CardDescription>Edit or remove individual credentials. Changes are saved when you update the product.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <FormField
@@ -191,13 +201,50 @@ export default function AdminProductEdit() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Stock Logs (Credentials)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder={"user1:pass1\nuser2:pass2"}
-                            className="min-h-[150px] font-mono text-sm"
-                            {...field}
-                          />
-                        </FormControl>
+                        <div className="space-y-3">
+                          {stockLogEntries.map((entry, index) => (
+                            <div key={index} className="flex items-start gap-2">
+                              <span className="mt-2 w-7 shrink-0 text-right text-xs text-muted-foreground">
+                                {index + 1}.
+                              </span>
+                              <Textarea
+                                value={entry}
+                                onChange={(event) => {
+                                  const entries = [...stockLogEntries];
+                                  entries[index] = event.target.value;
+                                  updateStockLogEntries(entries);
+                                }}
+                                className="min-h-10 flex-1 resize-y font-mono text-sm"
+                                aria-label={`Credential ${index + 1}`}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="mt-1 text-muted-foreground hover:text-destructive"
+                                onClick={() => updateStockLogEntries(stockLogEntries.filter((_, itemIndex) => itemIndex !== index))}
+                                aria-label={`Remove credential ${index + 1}`}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                          {stockLogEntries.length === 0 && (
+                            <p className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+                              No credentials saved for this product yet.
+                            </p>
+                          )}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => updateStockLogEntries([...stockLogEntries, ""])}
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add credential
+                          </Button>
+                        </div>
+                        <input type="hidden" {...field} />
                         <FormMessage />
                       </FormItem>
                     )}

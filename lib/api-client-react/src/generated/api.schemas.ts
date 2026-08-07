@@ -117,6 +117,11 @@ export interface Product {
   createdAt: string;
 }
 
+export type AdminProduct = Product & {
+  /** @nullable */
+  stockLogs: string | null;
+};
+
 export interface ProductListResponse {
   products: Product[];
   total: number;

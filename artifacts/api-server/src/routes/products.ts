@@ -34,6 +34,13 @@ function formatProduct(p: typeof productsTable.$inferSelect, categoryName: strin
   };
 }
 
+function formatAdminProduct(p: typeof productsTable.$inferSelect, categoryName: string) {
+  return {
+    ...formatProduct(p, categoryName),
+    stockLogs: p.stockLogs,
+  };
+}
+
 router.get("/products/featured", async (_req, res): Promise<void> => {
   const featured = await db
     .select()
@@ -111,6 +118,21 @@ router.get("/products/:id", async (req, res): Promise<void> => {
   res.json(formatProduct(product, cat?.name ?? ""));
 });
 
+router.get("/admin/products/:id", requireAdmin, async (req, res): Promise<void> => {
+  const params = GetProductParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const [product] = await db.select().from(productsTable).where(eq(productsTable.id, params.data.id));
+  if (!product) {
+    res.status(404).json({ error: "Product not found" });
+    return;
+  }
+  const [cat] = await db.select().from(categoriesTable).where(eq(categoriesTable.id, product.categoryId));
+  res.json(formatAdminProduct(product, cat?.name ?? ""));
+});
+
 router.post("/products", requireAdmin, async (req, res): Promise<void> => {
   const parsed = CreateProductBody.safeParse(req.body);
   if (!parsed.success) {
@@ -162,7 +184,7 @@ router.patch("/products/:id", requireAdmin, async (req, res): Promise<void> => {
     updates.stockCount = lines.length;
   }
 
-  const [product] = await db.update(productsTable).set(updates as Parameters<typeof productsTable.$inferSelect>[0]).where(eq(productsTable.id, params.data.id)).returning();
+  const [product] = await db.update(productsTable).set(updates as typeof productsTable.$inferInsert).where(eq(productsTable.id, params.data.id)).returning();
   if (!product) {
     res.status(404).json({ error: "Product not found" });
     return;

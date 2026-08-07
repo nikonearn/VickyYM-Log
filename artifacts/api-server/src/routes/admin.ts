@@ -329,7 +329,7 @@ router.get("/admin/support/tickets", requireAdmin, async (req, res): Promise<voi
 });
 
 router.get("/admin/support/tickets/:id", requireAdmin, async (req, res): Promise<void> => {
-  const id = parseInt(req.params.id ?? "0");
+  const id = parseInt(String(req.params.id ?? "0"), 10);
   if (!id) { res.status(400).json({ error: "Invalid id" }); return; }
   const [ticket] = await db.select().from(ticketsTable).where(eq(ticketsTable.id, id));
   if (!ticket) { res.status(404).json({ error: "Ticket not found" }); return; }

@@ -20,6 +20,7 @@ import type {
   AdminDashboard,
   AdminDepositListResponse,
   AdminOrderListResponse,
+  AdminProduct,
   AdminSettings,
   AdminUser,
   AdminUserListResponse,
@@ -1483,6 +1484,93 @@ export const useDeleteProduct = <
 > => {
   return useMutation(getDeleteProductMutationOptions(options));
 };
+
+/**
+ * @summary Get product details including stock credentials (admin)
+ */
+export const getGetAdminProductUrl = (id: number) => {
+  return `/api/admin/products/${id}`;
+};
+
+export const getAdminProduct = async (
+  id: number,
+  options?: RequestInit,
+): Promise<AdminProduct> => {
+  return customFetch<AdminProduct>(getGetAdminProductUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAdminProductQueryKey = (id: number) => {
+  return [`/api/admin/products/${id}`] as const;
+};
+
+export const getGetAdminProductQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminProduct>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getAdminProduct>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAdminProductQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminProduct>>> = ({
+    signal,
+  }) => getAdminProduct(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminProduct>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAdminProductQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminProduct>>
+>;
+export type GetAdminProductQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Get product details including stock credentials (admin)
+ */
+
+export function useGetAdminProduct<
+  TData = Awaited<ReturnType<typeof getAdminProduct>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getAdminProduct>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAdminProductQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List user orders

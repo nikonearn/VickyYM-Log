@@ -9,6 +9,7 @@
 export * from "./adminDashboard";
 export * from "./adminDepositListResponse";
 export * from "./adminOrderListResponse";
+export * from "./adminProduct";
 export * from "./adminSettings";
 export * from "./adminUser";
 export * from "./adminUserListResponse";

@@ -1,0 +1,1 @@
+- [Credential visibility](credential-visibility.md) — stock credentials must use an admin-only detail response; public product responses should expose counts, never credential contents.
